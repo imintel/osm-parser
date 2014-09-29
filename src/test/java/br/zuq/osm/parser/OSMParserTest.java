@@ -3,7 +3,12 @@ package br.zuq.osm.parser;
 import br.zuq.osm.parser.model.OSM;
 import br.zuq.osm.parser.model.Relation;
 import br.zuq.osm.parser.model.Way;
+import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.junit.Test;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -18,7 +23,11 @@ public class OSMParserTest {
 
     @Test
     public void testTest() throws Exception {
-        OSM osm = OSMParser.parse(getClass().getResourceAsStream("/montenegro-latest.osm"));
+
+        InputStream bis = new BufferedInputStream(getClass().getResourceAsStream("/montenegro-latest.osm.bz2"));
+        CompressorInputStream input = new CompressorStreamFactory().createCompressorInputStream(bis);
+
+        OSM osm = OSMParser.parse(input);
         assertEquals(990250, osm.getNodes().size());
         assertEquals(61263, osm.getWays().size());
         assertEquals(517, osm.getRelations().size());
